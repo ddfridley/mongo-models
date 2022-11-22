@@ -468,6 +468,19 @@ class MongoModels {
         return this.constructor.schema.validate(this);
     }
 
+    static async watch(...args){
+        const db = dbFromArgs(args);
+        const collection = db.collection(this.collectionName);
+        const pipeline = args.shift();
+        const options = Hoek.applyToDefaults({}, args.pop() || {});
+
+        args.push(pipeline);
+        args.push(options);
+
+        const watchCursor = await collection.watch(...args);
+        
+        return watchCursor
+    }
 
     static with(name) {
 
